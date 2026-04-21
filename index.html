@@ -9,15 +9,15 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg:       #111111;
-  --surface:  #1c1c1c;
-  --surface2: #252525;
-  --border:   #2e2e2e;
-  --text:     #e8e6e0;
-  --muted:    #606060;
-  --kick:     #f5a623;
-  --snare:    #4ecfb0;
-  --hat:      #9b88f5;
+  --bg:      #111;
+  --surface: #1c1c1c;
+  --surf2:   #252525;
+  --border:  #2e2e2e;
+  --text:    #e8e6e0;
+  --muted:   #606060;
+  --kick:    #f5a623;
+  --snare:   #4ecfb0;
+  --hat:     #9b88f5;
 }
 
 body {
@@ -28,25 +28,27 @@ body {
   display: flex;
   justify-content: center;
   padding: 1.5rem 1rem 2.5rem;
+  /* Prevent text selection during long-press */
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .app { width: 100%; max-width: 660px; }
 
-/* ── TOP BAR ─────────────────────────────────────────── */
+/* touch-action: manipulation prevents the iOS/Chrome double-tap-to-zoom
+   on any button or slider, without disabling pinch-zoom on the page */
+button, input[type="range"] { touch-action: manipulation; }
+
+/* ── TOP BAR ─────────────────────────────────── */
 .top-bar {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+  display: flex; align-items: center; gap: 12px;
   margin-bottom: 14px;
 }
 
 .btn-play {
-  width: 68px; height: 68px;
-  flex-shrink: 0;
-  border: none;
-  border-radius: 13px;
-  background: var(--kick);
-  color: #1a0f00;
+  width: 68px; height: 68px; flex-shrink: 0;
+  border: none; border-radius: 13px;
+  background: var(--kick); color: #1a0f00;
   display: flex; align-items: center; justify-content: center;
   cursor: pointer;
   transition: opacity .12s, transform .1s;
@@ -54,298 +56,251 @@ body {
 .btn-play:hover  { opacity: .85; }
 .btn-play:active { transform: scale(.95); }
 .btn-play.playing {
-  background: var(--surface2);
-  color: var(--text);
+  background: var(--surf2); color: var(--text);
   border: 1px solid var(--border);
 }
 
-.bpm-area {
-  flex: 1;
-  text-align: center;
-}
-.bpm-number {
+.bpm-area { flex: 1; text-align: center; }
+.bpm-num {
   font-family: 'DM Mono', monospace;
-  font-size: 78px;
-  line-height: 1;
-  letter-spacing: -.03em;
+  font-size: 78px; line-height: 1; letter-spacing: -.03em;
 }
 .bpm-unit {
-  font-size: 10px;
-  letter-spacing: .2em;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-top: 3px;
+  font-size: 10px; letter-spacing: .2em;
+  text-transform: uppercase; color: var(--muted); margin-top: 3px;
 }
 
 .btn-tap {
-  width: 82px; height: 68px;
-  flex-shrink: 0;
-  background: var(--surface2);
-  color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: 13px;
+  width: 82px; height: 68px; flex-shrink: 0;
+  background: var(--surf2); color: var(--text);
+  border: 1px solid var(--border); border-radius: 13px;
   font-family: 'Space Grotesk', sans-serif;
   font-size: 12px; font-weight: 500;
-  cursor: pointer;
-  line-height: 1.35;
+  cursor: pointer; line-height: 1.35;
   transition: background .1s, transform .1s;
 }
 .btn-tap:hover  { background: var(--surface); }
 .btn-tap:active { transform: scale(.97); }
 
-/* ── SLIDER ──────────────────────────────────────────── */
+/* ── SLIDER ──────────────────────────────────── */
 .slider-row {
   display: flex; align-items: center; gap: 10px;
   margin-bottom: 14px;
 }
-.s-lim {
-  font-family: 'DM Mono', monospace;
-  font-size: 11px; color: var(--muted);
-  flex-shrink: 0;
-}
+.s-lim { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); flex-shrink: 0; }
+
 input[type="range"] {
   -webkit-appearance: none; appearance: none;
-  flex: 1; height: 2px;
-  background: var(--border);
-  border-radius: 2px;
-  cursor: pointer; outline: none;
+  flex: 1; height: 2px; background: var(--border); border-radius: 2px; cursor: pointer; outline: none;
 }
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 18px; height: 18px;
-  border-radius: 50%; background: var(--kick); cursor: pointer;
+  width: 18px; height: 18px; border-radius: 50%; background: var(--kick); cursor: pointer;
 }
 input[type="range"]::-moz-range-thumb {
-  width: 18px; height: 18px;
-  border-radius: 50%; background: var(--kick); border: none;
+  width: 18px; height: 18px; border-radius: 50%; background: var(--kick); border: none;
 }
 
-/* ── MAIN CARD ───────────────────────────────────────── */
+/* ── MAIN CARD ───────────────────────────────── */
 .main-card {
-  background: var(--surface);
-  border: .5px solid var(--border);
-  border-radius: 16px;
-  padding: 1.2rem 1.1rem 1.2rem 1.1rem;
-  display: flex; gap: 13px;
-  align-items: flex-start;
+  background: var(--surface); border: .5px solid var(--border);
+  border-radius: 16px; padding: 1.2rem 1.1rem;
+  display: flex; gap: 13px; align-items: flex-start;
   margin-bottom: 10px;
 }
 
-/* ── TIME-SIG COLUMN ─────────────────────────────────── */
-.tsig-col {
-  display: flex; flex-direction: column;
-  gap: 8px; flex-shrink: 0;
-}
-.ts-wrap { position: relative; }
+/* ── TIME-SIG COLUMN ─────────────────────────── */
+.tsig-col { display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
+.ts-wrap  { position: relative; }
 
 .ts-btn {
   width: 56px; height: 56px;
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 11px;
-  color: var(--text);
-  font-family: 'DM Mono', monospace;
-  font-size: 22px; font-weight: 500;
-  cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  transition: background .1s, border-color .12s;
-  padding: 0;
+  background: var(--surf2); border: 1px solid var(--border); border-radius: 11px;
+  color: var(--text); font-family: 'DM Mono', monospace; font-size: 22px; font-weight: 500;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: background .1s, border-color .12s; padding: 0;
 }
-.ts-btn:hover  { background: var(--surface); border-color: #484848; }
+.ts-btn:hover   { background: var(--surface); border-color: #484848; }
 .ts-btn.dd-open { border-color: var(--kick); }
 
-/* Beats dropdown */
 .ts-dd {
-  position: absolute;
-  left: 60px; top: 0;
-  z-index: 40;
-  background: var(--surface2);
-  border: 1px solid #3a3a3a;
-  border-radius: 10px;
-  overflow: hidden;
-  min-width: 54px;
+  position: absolute; left: 60px; top: 0; z-index: 40;
+  background: var(--surf2); border: 1px solid #3a3a3a;
+  border-radius: 10px; overflow: hidden; min-width: 54px;
   box-shadow: 0 6px 28px rgba(0,0,0,.65);
 }
 .ts-dd.hidden { display: none; }
 
 .ts-opt {
-  display: block; width: 100%;
-  background: none; border: none;
-  border-bottom: .5px solid var(--border);
-  color: var(--text);
-  font-family: 'DM Mono', monospace;
-  font-size: 17px;
-  padding: 10px 0;
-  cursor: pointer; text-align: center;
+  display: block; width: 100%; background: none; border: none;
+  border-bottom: .5px solid var(--border); color: var(--text);
+  font-family: 'DM Mono', monospace; font-size: 17px;
+  padding: 10px 0; cursor: pointer; text-align: center;
   transition: background .1s;
 }
 .ts-opt:last-child { border-bottom: none; }
 .ts-opt:hover { background: rgba(255,255,255,.07); }
-.ts-opt.active-opt { color: var(--kick); }
+.ts-opt.cur-b { color: var(--kick); }
 
-/* Compound hint */
 .ts-hint {
-  position: absolute;
-  left: 60px; top: 4px;
-  z-index: 40;
-  background: #1d1500;
-  border: 1px solid var(--kick);
-  border-radius: 8px;
-  padding: 8px 12px;
+  position: absolute; left: 60px; top: 4px; z-index: 40;
+  background: #1d1500; border: 1px solid var(--kick);
+  border-radius: 8px; padding: 8px 12px;
   font-size: 11.5px; color: var(--kick);
-  white-space: nowrap;
-  box-shadow: 0 4px 18px rgba(0,0,0,.6);
+  white-space: nowrap; box-shadow: 0 4px 18px rgba(0,0,0,.6);
 }
 .ts-hint.hidden { display: none; }
 
-/* ── GRID AREA ───────────────────────────────────────── */
+/* ── GRID AREA ───────────────────────────────── */
 .grid-area { flex: 1; min-width: 0; }
 
-/* Beat-label row (spacer + labels) */
-.bl-row {
-  display: flex; gap: 5px;
-  margin-bottom: 5px;
-}
-.bl-spacer { flex-shrink: 0; } /* width set by JS to match row-labels */
+.bl-row { display: flex; gap: 5px; margin-bottom: 5px; }
+.bl-spacer { flex-shrink: 0; }
 
-.beat-labels {
-  flex: 1;
-  display: grid;
-  column-gap: 4px;
-}
-.bl {
-  text-align: center;
-  font-family: 'DM Mono', monospace;
-  font-size: 10px; color: var(--muted);
-  line-height: 1; padding-bottom: 3px;
-}
+.beat-labels { flex: 1; display: grid; column-gap: 4px; }
+.bl { text-align: center; font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); line-height: 1; }
 .bl.mb { color: var(--text); }
 
-/* Instrument label + grid */
-.grid-inner {
-  display: flex; gap: 5px;
-  align-items: stretch;
-}
-.row-labels {
-  display: flex; flex-direction: column;
-  gap: 7px; flex-shrink: 0;
-}
+.grid-inner { display: flex; gap: 5px; align-items: stretch; }
+
+.row-labels { display: flex; flex-direction: column; gap: 7px; flex-shrink: 0; }
 .rl {
-  font-size: 9px;
-  font-family: 'DM Mono', monospace;
+  font-size: 9px; font-family: 'DM Mono', monospace;
   letter-spacing: .05em; color: var(--muted);
-  text-align: right;
-  flex: 1;
-  display: flex; align-items: center; justify-content: flex-end;
+  flex: 1; display: flex; align-items: center; justify-content: flex-end;
 }
 .rl.c-hat   { color: var(--hat); }
 .rl.c-snare { color: var(--snare); }
 .rl.c-kick  { color: var(--kick); }
 
 .step-grid {
-  flex: 1;
-  display: grid;
-  column-gap: 4px;
-  row-gap: 7px;
+  flex: 1; display: grid; column-gap: 4px; row-gap: 7px;
 }
 
-/* Grid cells */
+/* ── GRID CELLS ──────────────────────────────── */
 .gc {
-  aspect-ratio: 1;
-  border-radius: 5px;
-  border: 1px solid var(--border);
-  background: var(--surface2);
-  cursor: pointer;
-  padding: 0; outline: none;
-  transition: background .06s, border-color .06s;
-  min-width: 0;
+  aspect-ratio: 1; border-radius: 5px;
+  border: 1px solid var(--border); background: var(--surf2);
+  cursor: pointer; padding: 0; outline: none; min-width: 0;
+  transition: background .06s, border-color .06s, opacity .12s;
+  position: relative;
 }
 .gc:hover { border-color: #484848; }
 
-.gc.hihat.on { background: var(--hat);   border-color: var(--hat); }
+/* Primary (solid fill) */
+.gc.hihat.on { background: var(--hat);   border-color: var(--hat);   }
 .gc.snare.on { background: var(--snare); border-color: var(--snare); }
-.gc.kick.on  { background: var(--kick);  border-color: var(--kick); }
+.gc.kick.on  { background: var(--kick);  border-color: var(--kick);  }
+
+/* Alternate (outline only) */
+.gc.hihat.alt { background: transparent; border: 2px solid var(--hat);   }
+.gc.snare.alt { background: transparent; border: 2px solid var(--snare); }
+.gc.kick.alt  { background: transparent; border: 2px solid var(--kick);  }
+
+/* Tooltip label inside alt cell */
+.gc.alt::after {
+  content: attr(data-label);
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 7px; font-family: 'DM Mono', monospace;
+  opacity: 0.7; color: currentColor;
+  pointer-events: none;
+}
+.gc.hihat.alt::after { color: var(--hat); }
+.gc.snare.alt::after { color: var(--snare); }
+.gc.kick.alt::after  { color: var(--kick); }
 
 /* Current-step highlight */
 .gc.cur { outline: 2px solid rgba(255,255,255,.22); outline-offset: -1px; }
-.gc.hihat.on.cur { outline-color: #c4b6f8; }
-.gc.snare.on.cur { outline-color: #7fe3cf; }
-.gc.kick.on.cur  { outline-color: #f8c870; }
+.gc.hihat.on.cur   { outline-color: #c4b6f8; }
+.gc.snare.on.cur   { outline-color: #7fe3cf; }
+.gc.kick.on.cur    { outline-color: #f8c870; }
+.gc.hihat.alt.cur  { outline: 2px solid rgba(155,136,245,.6); outline-offset: 1px; }
+.gc.snare.alt.cur  { outline: 2px solid rgba(78,207,176,.6);  outline-offset: 1px; }
+.gc.kick.alt.cur   { outline: 2px solid rgba(245,166,35,.6);  outline-offset: 1px; }
 
-/* ── BOTTOM ROW ──────────────────────────────────────── */
-.bottom-row {
-  display: flex; gap: 8px;
-}
+/* Spacer cell (invisible but takes space) */
+.gc-spacer { aspect-ratio: 1; visibility: hidden; min-width: 0; }
+
+/* ── BOTTOM ROW ──────────────────────────────── */
+.bottom-row { display: flex; gap: 8px; }
+
 .bb {
   flex: 1; height: 50px;
-  background: var(--surface2);
-  color: var(--muted);
-  border: 1px solid var(--border);
-  border-radius: 11px;
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 15px; font-weight: 500;
+  background: var(--surf2); color: var(--muted);
+  border: 1px solid var(--border); border-radius: 11px;
+  font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 500;
   cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   padding: 0;
-  transition: background .1s, border-color .1s, color .1s;
+  transition: background .1s, border-color .12s, color .12s;
+  position: relative; overflow: hidden;
 }
 .bb:hover { background: var(--surface); }
-.bb.sel-preset {
-  background: rgba(245,166,35,.1);
-  border-color: var(--kick);
-  color: var(--kick);
+.bb.sel-preset { background: rgba(245,166,35,.1); border-color: var(--kick); color: var(--kick); }
+.bb.sel-16th   { background: rgba(155,136,245,.13); border-color: var(--hat); color: var(--hat); }
+
+/* Charge animation for hold-to-save */
+@keyframes charge {
+  from { box-shadow: inset 0 0 0 0 rgba(245,166,35,0); }
+  to   { box-shadow: inset 0 0 0 4px rgba(245,166,35,0.8); }
 }
-.bb.sel-16th {
-  background: rgba(155,136,245,.13);
-  border-color: var(--hat);
-  color: var(--hat);
+.bb.saving { animation: charge 2s linear forwards; }
+
+@keyframes savedPop {
+  0%   { background: rgba(245,166,35,.35); }
+  100% { background: rgba(245,166,35,.1); }
+}
+.bb.save-done {
+  border-color: var(--kick) !important; color: var(--kick) !important;
+  animation: savedPop .5s ease-out forwards;
+}
+
+/* Long-press hint under grid */
+.hold-hint {
+  text-align: center; margin-top: 8px;
+  font-size: 10px; color: #3a3a3a; letter-spacing: .06em;
 }
 
 .kbd-hint {
-  text-align: center;
-  margin-top: 14px;
-  font-size: 11px;
-  color: #343434;
-  letter-spacing: .07em;
+  text-align: center; margin-top: 5px;
+  font-size: 10px; color: #303030; letter-spacing: .07em;
 }
 </style>
 </head>
 <body>
 <div class="app">
 
-  <!-- ── Top bar ── -->
+  <!-- Top bar -->
   <div class="top-bar">
     <button class="btn-play" id="play-btn" aria-label="Play / Stop"></button>
     <div class="bpm-area">
-      <div class="bpm-number" id="bpm-display">120</div>
+      <div class="bpm-num" id="bpm-display">120</div>
       <div class="bpm-unit">bpm</div>
     </div>
     <button class="btn-tap" id="tap-btn">Tap<br>Tempo</button>
   </div>
 
-  <!-- ── Slider ── -->
+  <!-- Slider -->
   <div class="slider-row">
     <span class="s-lim">40</span>
     <input type="range" id="bpm-slider" min="40" max="200" value="120" step="1">
     <span class="s-lim">200</span>
   </div>
 
-  <!-- ── Main card ── -->
+  <!-- Main card -->
   <div class="main-card">
-
-    <!-- Time-sig buttons -->
     <div class="tsig-col">
-      <div class="ts-wrap" id="beats-wrap">
+      <div class="ts-wrap">
         <button class="ts-btn" id="beats-btn" aria-label="Beats per measure">4</button>
         <div class="ts-dd hidden" id="beats-dd"></div>
       </div>
-      <div class="ts-wrap" id="meter-wrap">
-        <button class="ts-btn" id="meter-btn" style="padding:7px" aria-label="Simple / Compound meter"></button>
+      <div class="ts-wrap">
+        <button class="ts-btn" id="meter-btn" style="padding:7px" aria-label="Simple / Compound"></button>
         <div class="ts-hint hidden" id="ts-hint">Select 2 or 3 beats</div>
       </div>
     </div>
 
-    <!-- Grid -->
     <div class="grid-area">
       <div class="bl-row">
         <div class="bl-spacer" id="bl-spacer"></div>
@@ -360,219 +315,246 @@ input[type="range"]::-moz-range-thumb {
         <div class="step-grid" id="step-grid"></div>
       </div>
     </div>
-
   </div>
 
-  <!-- ── Bottom row ── -->
+  <!-- Bottom row -->
   <div class="bottom-row">
-    <button class="bb" id="s16-btn" aria-label="16th-note hi-hat"></button>
+    <button class="bb" id="s16-btn" aria-label="16th-note hi-hats"></button>
     <button class="bb" data-preset="A">A</button>
     <button class="bb" data-preset="B">B</button>
     <button class="bb" data-preset="C">C</button>
     <button class="bb" data-preset="D">D</button>
   </div>
 
-  <div class="kbd-hint">space to play / stop</div>
+  <div class="hold-hint">hold grid square 1s → alternate sound &nbsp;·&nbsp; hold A–D for 2s → save beat</div>
+  <div class="kbd-hint">space = play / stop</div>
 </div>
 
 <script>
-// ═══════════════════════════════════════════════════════
-//  SVG ICONS
-// ═══════════════════════════════════════════════════════
-const ICO_PLAY = `<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><polygon points="5,2 21,12 5,22"/></svg>`;
-const ICO_STOP = `<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><rect x="3" y="3" width="18" height="18" rx="3"/></svg>`;
+// ═══════════════════════════════════════════════
+//  ICONS
+// ═══════════════════════════════════════════════
+const ICO_PLAY   = `<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><polygon points="5,2 21,12 5,22"/></svg>`;
+const ICO_STOP   = `<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><rect x="3" y="3" width="18" height="18" rx="3"/></svg>`;
+const ICO_QTR    = `<svg viewBox="0 0 22 44" width="18" height="38" fill="currentColor"><ellipse cx="13" cy="10" rx="9" ry="6" transform="rotate(-20 13 10)"/><line x1="4.5" y1="13" x2="4.5" y2="43" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>`;
+const ICO_DOTQTR = `<svg viewBox="0 0 32 44" width="26" height="38" fill="currentColor"><ellipse cx="13" cy="10" rx="9" ry="6" transform="rotate(-20 13 10)"/><line x1="4.5" y1="13" x2="4.5" y2="43" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><circle cx="27" cy="9" r="3.5"/></svg>`;
+const ICO_16TH   = `<svg viewBox="0 0 48 32" width="40" height="28" fill="currentColor"><ellipse cx="9" cy="25" rx="8" ry="5" transform="rotate(-18 9 25)"/><ellipse cx="31" cy="25" rx="8" ry="5" transform="rotate(-18 31 25)"/><line x1="16.5" y1="22" x2="16.5" y2="2" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="38.5" y1="22" x2="38.5" y2="2" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><rect x="16.5" y="2" width="22" height="4" rx="1.5"/><rect x="16.5" y="9.5" width="22" height="4" rx="1.5"/></svg>`;
 
-// Stem-down quarter note
-const ICO_QUARTER = `<svg viewBox="0 0 22 44" width="18" height="38" fill="currentColor">
-  <ellipse cx="13" cy="10" rx="9" ry="6" transform="rotate(-20 13 10)"/>
-  <line x1="4.5" y1="13" x2="4.5" y2="43" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-</svg>`;
-
-// Stem-down dotted quarter note
-const ICO_DOTTED = `<svg viewBox="0 0 32 44" width="26" height="38" fill="currentColor">
-  <ellipse cx="13" cy="10" rx="9" ry="6" transform="rotate(-20 13 10)"/>
-  <line x1="4.5" y1="13" x2="4.5" y2="43" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-  <circle cx="27" cy="9" r="3.5"/>
-</svg>`;
-
-// Two beamed 16th notes
-const ICO_16TH = `<svg viewBox="0 0 48 32" width="40" height="28" fill="currentColor">
-  <ellipse cx="9"  cy="25" rx="8" ry="5" transform="rotate(-18 9 25)"/>
-  <ellipse cx="31" cy="25" rx="8" ry="5" transform="rotate(-18 31 25)"/>
-  <line x1="16.5" y1="22" x2="16.5" y2="2" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-  <line x1="38.5" y1="22" x2="38.5" y2="2" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-  <rect x="16.5" y="2"   width="22" height="4"   rx="1.5"/>
-  <rect x="16.5" y="9.5" width="22" height="4"   rx="1.5"/>
-</svg>`;
-
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 //  STATE
-// ═══════════════════════════════════════════════════════
-let bpm          = 120;
-let beats        = 4;
-let compound     = false;
-let is16th       = false;
+// ═══════════════════════════════════════════════
+let bpm = 120, beats = 4, compound = false, is16th = false;
 let activePreset = 'A';
-let pattern      = [];   // [{hihat,snare,kick}, …]
+// pattern: each step = { hihat: 0|1|2, snare: 0|1|2, kick: 0|1|2 }
+// 0 = off, 1 = primary sound, 2 = alternate sound
+let pattern = [];
 
-let audioCtx   = null;
-let isPlaying  = false;
-let curStep    = 0;
-let nextTime   = 0;
-let schedTimer = null;
-const LOOKAHEAD   = 0.1;   // sec
-const SCHED_MS    = 25;
+// Session-saved presets (cleared on page reload)
+const sessionPresets = {};
 
-let litStep   = -1;
-let tapTimes  = [];
-let hintTimer = null;
+let audioCtx = null, isPlaying = false;
+let curStep = 0, nextTime = 0, schedTimer = null;
+const LOOKAHEAD = 0.1, SCHED_MS = 25;
 
-// ═══════════════════════════════════════════════════════
-//  PRESETS
-//  Key: "${beats}-${S|C}-${A|B|C|D}"
-// ═══════════════════════════════════════════════════════
-const p = (h, s, k) => ({ hihat:!!h, snare:!!s, kick:!!k });
+let litStep = -1, tapTimes = [], hintTimer = null;
+
+// ═══════════════════════════════════════════════
+//  PRESETS  (0/1 values — no alt in defaults)
+// ═══════════════════════════════════════════════
+const p = (h,s,k) => ({ hihat:h, snare:s, kick:k });
 
 const PRESETS = {
-  // Simple 1 — 2 steps
-  '1-S-A': [p(1,0,1), p(1,0,0)],
-  '1-S-B': [p(1,1,0), p(1,0,0)],
-  '1-S-C': [p(0,0,1), p(0,1,0)],
-  '1-S-D': [p(1,0,1), p(0,1,0)],
+  '1-S-A':[p(1,0,1),p(1,0,0)],
+  '1-S-B':[p(1,1,0),p(1,0,0)],
+  '1-S-C':[p(0,0,1),p(0,1,0)],
+  '1-S-D':[p(1,0,1),p(0,1,0)],
 
-  // Simple 2 — 4 steps
-  '2-S-A': [p(1,0,1),p(1,0,0),p(1,1,0),p(1,0,0)],
-  '2-S-B': [p(1,0,1),p(0,0,0),p(1,1,1),p(0,0,0)],
-  '2-S-C': [p(1,0,1),p(1,0,0),p(1,0,0),p(1,1,0)],
-  '2-S-D': [p(0,0,1),p(1,0,0),p(0,1,0),p(1,0,1)],
+  '2-S-A':[p(1,0,1),p(1,0,0),p(1,1,0),p(1,0,0)],
+  '2-S-B':[p(1,0,1),p(0,0,0),p(1,1,1),p(0,0,0)],
+  '2-S-C':[p(1,0,1),p(1,0,0),p(1,0,0),p(1,1,0)],
+  '2-S-D':[p(0,0,1),p(1,0,0),p(0,1,0),p(1,0,1)],
 
-  // Simple 3 — 6 steps
-  '3-S-A': [p(1,0,1),p(1,0,0),p(1,1,0),p(1,0,0),p(1,1,0),p(1,0,0)],
-  '3-S-B': [p(1,0,1),p(1,0,0),p(1,0,0),p(1,0,0),p(1,0,1),p(1,1,0)],
-  '3-S-C': [p(1,0,1),p(0,0,0),p(1,1,0),p(0,0,0),p(1,0,0),p(0,0,0)],
-  '3-S-D': [p(1,0,1),p(1,0,0),p(0,1,0),p(1,0,1),p(1,0,0),p(0,1,0)],
+  '3-S-A':[p(1,0,1),p(1,0,0),p(1,1,0),p(1,0,0),p(1,1,0),p(1,0,0)],
+  '3-S-B':[p(1,0,1),p(1,0,0),p(1,0,0),p(1,0,0),p(1,0,1),p(1,1,0)],
+  '3-S-C':[p(1,0,1),p(0,0,0),p(1,1,0),p(0,0,0),p(1,0,0),p(0,0,0)],
+  '3-S-D':[p(1,0,1),p(1,0,0),p(0,1,0),p(1,0,1),p(1,0,0),p(0,1,0)],
 
-  // Simple 4 — 8 steps (default)
-  '4-S-A': [p(1,0,1),p(1,0,0),p(1,1,0),p(1,0,0),p(1,0,1),p(1,0,0),p(1,1,0),p(1,0,0)],
-  '4-S-B': [p(1,0,1),p(1,0,0),p(1,1,0),p(1,0,1),p(1,0,1),p(1,0,0),p(1,1,0),p(1,0,0)],
-  '4-S-C': [p(1,0,1),p(1,0,0),p(1,0,0),p(1,0,0),p(1,1,0),p(1,0,0),p(1,0,0),p(1,0,0)],
-  '4-S-D': [p(1,0,1),p(0,0,0),p(1,1,0),p(1,0,0),p(0,0,1),p(1,0,0),p(1,1,0),p(0,0,0)],
+  '4-S-A':[p(1,0,1),p(1,0,0),p(1,1,0),p(1,0,0),p(1,0,1),p(1,0,0),p(1,1,0),p(1,0,0)],
+  '4-S-B':[p(1,0,1),p(1,0,0),p(1,1,0),p(1,0,1),p(1,0,1),p(1,0,0),p(1,1,0),p(1,0,0)],
+  '4-S-C':[p(1,0,1),p(1,0,0),p(1,0,0),p(1,0,0),p(1,1,0),p(1,0,0),p(1,0,0),p(1,0,0)],
+  '4-S-D':[p(1,0,1),p(0,0,0),p(1,1,0),p(1,0,0),p(0,0,1),p(1,0,0),p(1,1,0),p(0,0,0)],
 
-  // Simple 5 — 10 steps
-  '5-S-A': [p(1,0,1),p(1,0,0),p(1,1,0),p(1,0,0),p(1,0,0),p(1,0,1),p(1,0,0),p(1,0,0),p(1,1,0),p(1,0,0)],
-  '5-S-B': [p(1,0,1),p(1,0,0),p(1,0,0),p(1,1,0),p(1,0,0),p(1,0,1),p(1,0,0),p(1,1,0),p(1,0,0),p(1,0,0)],
-  '5-S-C': [p(1,0,1),p(0,0,0),p(1,1,0),p(0,0,0),p(1,0,0),p(0,0,1),p(0,0,0),p(1,1,0),p(0,0,0),p(1,0,0)],
-  '5-S-D': [p(1,0,1),p(1,0,1),p(1,1,0),p(1,0,0),p(1,0,0),p(1,0,0),p(1,0,1),p(1,1,0),p(1,0,0),p(1,0,0)],
+  '5-S-A':[p(1,0,1),p(1,0,0),p(1,1,0),p(1,0,0),p(1,0,0),p(1,0,1),p(1,0,0),p(1,0,0),p(1,1,0),p(1,0,0)],
+  '5-S-B':[p(1,0,1),p(1,0,0),p(1,0,0),p(1,1,0),p(1,0,0),p(1,0,1),p(1,0,0),p(1,1,0),p(1,0,0),p(1,0,0)],
+  '5-S-C':[p(1,0,1),p(0,0,0),p(1,1,0),p(0,0,0),p(1,0,0),p(0,0,1),p(0,0,0),p(1,1,0),p(0,0,0),p(1,0,0)],
+  '5-S-D':[p(1,0,1),p(1,0,1),p(1,1,0),p(1,0,0),p(1,0,0),p(1,0,0),p(1,0,1),p(1,1,0),p(1,0,0),p(1,0,0)],
 
-  // Compound 2 — 6 steps (6/8)
-  '2-C-A': [p(1,0,1),p(1,0,0),p(1,0,0), p(1,1,0),p(1,0,0),p(1,0,0)],
-  '2-C-B': [p(1,0,1),p(0,0,0),p(1,0,0), p(1,1,0),p(0,0,0),p(1,0,0)],
-  '2-C-C': [p(1,0,1),p(1,0,0),p(1,0,1), p(1,1,0),p(1,0,0),p(1,1,0)],
-  '2-C-D': [p(1,0,1),p(0,0,0),p(0,1,0), p(1,0,0),p(0,0,0),p(0,1,0)],
+  '2-C-A':[p(1,0,1),p(1,0,0),p(1,0,0), p(1,1,0),p(1,0,0),p(1,0,0)],
+  '2-C-B':[p(1,0,1),p(0,0,0),p(1,0,0), p(1,1,0),p(0,0,0),p(1,0,0)],
+  '2-C-C':[p(1,0,1),p(1,0,0),p(1,0,1), p(1,1,0),p(1,0,0),p(1,1,0)],
+  '2-C-D':[p(1,0,1),p(0,0,0),p(0,1,0), p(1,0,0),p(0,0,0),p(0,1,0)],
 
-  // Compound 3 — 9 steps (9/8)
-  '3-C-A': [p(1,0,1),p(1,0,0),p(1,0,0), p(1,1,0),p(1,0,0),p(1,0,0), p(1,0,0),p(1,0,0),p(1,0,0)],
-  '3-C-B': [p(1,0,1),p(0,0,0),p(1,0,0), p(1,1,0),p(0,0,0),p(1,0,0), p(1,0,1),p(0,0,0),p(1,0,0)],
-  '3-C-C': [p(1,0,1),p(1,0,0),p(0,0,0), p(1,0,0),p(1,1,0),p(0,0,0), p(1,0,0),p(1,0,0),p(0,0,0)],
-  '3-C-D': [p(1,0,1),p(0,0,0),p(1,0,0), p(0,1,0),p(0,0,0),p(1,0,1), p(0,0,0),p(0,1,0),p(1,0,0)],
+  '3-C-A':[p(1,0,1),p(1,0,0),p(1,0,0), p(1,1,0),p(1,0,0),p(1,0,0), p(1,0,0),p(1,0,0),p(1,0,0)],
+  '3-C-B':[p(1,0,1),p(0,0,0),p(1,0,0), p(1,1,0),p(0,0,0),p(1,0,0), p(1,0,1),p(0,0,0),p(1,0,0)],
+  '3-C-C':[p(1,0,1),p(1,0,0),p(0,0,0), p(1,0,0),p(1,1,0),p(0,0,0), p(1,0,0),p(1,0,0),p(0,0,0)],
+  '3-C-D':[p(1,0,1),p(0,0,0),p(1,0,0), p(0,1,0),p(0,0,0),p(1,0,1), p(0,0,0),p(0,1,0),p(1,0,0)],
 };
 
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 //  HELPERS
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 const stepCount    = () => beats * (compound ? 3 : 2);
-const stepDuration = () => compound ? 20 / bpm : 30 / bpm;  // seconds
-const presetKey    = (pr) => `${beats}-${compound ? 'C' : 'S'}-${pr}`;
+const stepDuration = () => compound ? 20 / bpm : 30 / bpm;
+const presetKey    = (pr) => `${beats}-${compound?'C':'S'}-${pr}`;
+const MIN_DISPLAY  = 4; // minimum columns shown in grid
 
 function loadPreset(pr) {
   const key = presetKey(pr);
-  if (PRESETS[key]) {
-    pattern = PRESETS[key].map(s => ({ ...s }));
+  const src = sessionPresets[key] || PRESETS[key];
+  if (src) {
+    pattern = src.map(s => ({ ...s }));
     activePreset = pr;
   } else {
-    const n = stepCount();
-    pattern = Array.from({ length: n }, () => ({ hihat: false, snare: false, kick: false }));
+    pattern = Array.from({ length: stepCount() }, () => ({ hihat:0, snare:0, kick:0 }));
     activePreset = null;
   }
 }
 
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 //  AUDIO SYNTHESIS
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 function ensureAudio() {
   if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   if (audioCtx.state === 'suspended') audioCtx.resume();
 }
 
 function playKick(t) {
-  const osc = audioCtx.createOscillator();
-  const g   = audioCtx.createGain();
-  osc.connect(g); g.connect(audioCtx.destination);
-  osc.frequency.setValueAtTime(180, t);
-  osc.frequency.exponentialRampToValueAtTime(40, t + 0.07);
-  osc.frequency.exponentialRampToValueAtTime(35, t + 0.35);
-  g.gain.setValueAtTime(0, t);
-  g.gain.linearRampToValueAtTime(1.0, t + 0.005);
-  g.gain.exponentialRampToValueAtTime(0.001, t + 0.45);
-  osc.start(t); osc.stop(t + 0.5);
+  const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+  o.connect(g); g.connect(audioCtx.destination);
+  o.frequency.setValueAtTime(180, t);
+  o.frequency.exponentialRampToValueAtTime(40, t+.07);
+  o.frequency.exponentialRampToValueAtTime(35, t+.35);
+  g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(1,t+.005);
+  g.gain.exponentialRampToValueAtTime(.001,t+.45);
+  o.start(t); o.stop(t+.5);
+}
+
+// Low tom — like kick but shorter pitch sweep, rounder tone
+function playTom(t) {
+  const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+  o.connect(g); g.connect(audioCtx.destination);
+  o.frequency.setValueAtTime(110, t);
+  o.frequency.exponentialRampToValueAtTime(68, t+.09);
+  o.frequency.exponentialRampToValueAtTime(60, t+.28);
+  g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(.85,t+.006);
+  g.gain.exponentialRampToValueAtTime(.001,t+.38);
+  o.start(t); o.stop(t+.42);
+  // light body thud
+  const n=audioCtx.sampleRate*.02|0, b=audioCtx.createBuffer(1,n,audioCtx.sampleRate);
+  const d=b.getChannelData(0); for(let i=0;i<n;i++) d[i]=Math.random()*2-1;
+  const s=audioCtx.createBufferSource(); s.buffer=b;
+  const lpf=audioCtx.createBiquadFilter(); lpf.type='lowpass'; lpf.frequency.value=400;
+  const g2=audioCtx.createGain();
+  g2.gain.setValueAtTime(0,t); g2.gain.linearRampToValueAtTime(.35,t+.002);
+  g2.gain.exponentialRampToValueAtTime(.001,t+.02);
+  s.connect(lpf); lpf.connect(g2); g2.connect(audioCtx.destination);
+  s.start(t); s.stop(t+.025);
 }
 
 function playSnare(t) {
-  const len = Math.ceil(audioCtx.sampleRate * 0.22);
-  const buf = audioCtx.createBuffer(1, len, audioCtx.sampleRate);
-  const d   = buf.getChannelData(0);
-  for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
-  const src = audioCtx.createBufferSource(); src.buffer = buf;
-  const hpf = audioCtx.createBiquadFilter();
-  hpf.type = 'highpass'; hpf.frequency.value = 1800;
-  const g = audioCtx.createGain();
-  g.gain.setValueAtTime(0, t);
-  g.gain.linearRampToValueAtTime(0.7, t + 0.003);
-  g.gain.exponentialRampToValueAtTime(0.001, t + 0.22);
-  src.connect(hpf); hpf.connect(g); g.connect(audioCtx.destination);
-  src.start(t); src.stop(t + 0.25);
-
-  const osc = audioCtx.createOscillator(); osc.type = 'triangle';
-  osc.frequency.setValueAtTime(220, t);
-  osc.frequency.exponentialRampToValueAtTime(100, t + 0.06);
-  const og = audioCtx.createGain();
-  og.gain.setValueAtTime(0, t);
-  og.gain.linearRampToValueAtTime(0.5, t + 0.003);
-  og.gain.exponentialRampToValueAtTime(0.001, t + 0.06);
-  osc.connect(og); og.connect(audioCtx.destination);
-  osc.start(t); osc.stop(t + 0.08);
+  const n=audioCtx.sampleRate*.22|0, b=audioCtx.createBuffer(1,n,audioCtx.sampleRate);
+  const d=b.getChannelData(0); for(let i=0;i<n;i++) d[i]=Math.random()*2-1;
+  const s=audioCtx.createBufferSource(); s.buffer=b;
+  const hpf=audioCtx.createBiquadFilter(); hpf.type='highpass'; hpf.frequency.value=1800;
+  const g=audioCtx.createGain();
+  g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(.7,t+.003);
+  g.gain.exponentialRampToValueAtTime(.001,t+.22);
+  s.connect(hpf); hpf.connect(g); g.connect(audioCtx.destination);
+  s.start(t); s.stop(t+.25);
+  const o=audioCtx.createOscillator(); o.type='triangle';
+  o.frequency.setValueAtTime(220,t); o.frequency.exponentialRampToValueAtTime(100,t+.06);
+  const og=audioCtx.createGain();
+  og.gain.setValueAtTime(0,t); og.gain.linearRampToValueAtTime(.5,t+.003);
+  og.gain.exponentialRampToValueAtTime(.001,t+.06);
+  o.connect(og); og.connect(audioCtx.destination); o.start(t); o.stop(t+.08);
 }
 
-function playHihat(t, vol = 0.3) {
-  const dur = 0.065;
-  const len = Math.ceil(audioCtx.sampleRate * dur);
-  const buf = audioCtx.createBuffer(1, len, audioCtx.sampleRate);
-  const d   = buf.getChannelData(0);
-  for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
-  const src = audioCtx.createBufferSource(); src.buffer = buf;
-  const hpf = audioCtx.createBiquadFilter();
-  hpf.type = 'highpass'; hpf.frequency.value = 7000;
-  const g = audioCtx.createGain();
-  g.gain.setValueAtTime(0, t);
-  g.gain.linearRampToValueAtTime(vol, t + 0.002);
-  g.gain.exponentialRampToValueAtTime(0.001, t + dur);
-  src.connect(hpf); hpf.connect(g); g.connect(audioCtx.destination);
-  src.start(t); src.stop(t + dur + 0.01);
+// Rimshot — sharp crack: bandpass noise + high ping
+function playRimshot(t) {
+  const n=audioCtx.sampleRate*.04|0, b=audioCtx.createBuffer(1,n,audioCtx.sampleRate);
+  const d=b.getChannelData(0); for(let i=0;i<n;i++) d[i]=Math.random()*2-1;
+  const s=audioCtx.createBufferSource(); s.buffer=b;
+  const bpf=audioCtx.createBiquadFilter(); bpf.type='bandpass'; bpf.frequency.value=2800; bpf.Q.value=0.6;
+  const g=audioCtx.createGain();
+  g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(.95,t+.001);
+  g.gain.exponentialRampToValueAtTime(.001,t+.04);
+  s.connect(bpf); bpf.connect(g); g.connect(audioCtx.destination);
+  s.start(t); s.stop(t+.05);
+  // pitched ping
+  const o=audioCtx.createOscillator(); o.type='sine';
+  o.frequency.setValueAtTime(900,t); o.frequency.exponentialRampToValueAtTime(500,t+.018);
+  const og=audioCtx.createGain();
+  og.gain.setValueAtTime(.65,t); og.gain.exponentialRampToValueAtTime(.001,t+.025);
+  o.connect(og); og.connect(audioCtx.destination); o.start(t); o.stop(t+.03);
 }
 
-// ═══════════════════════════════════════════════════════
+function playHihat(t, vol=0.3) {
+  const dur=.065, n=audioCtx.sampleRate*dur|0;
+  const b=audioCtx.createBuffer(1,n,audioCtx.sampleRate);
+  const d=b.getChannelData(0); for(let i=0;i<n;i++) d[i]=Math.random()*2-1;
+  const s=audioCtx.createBufferSource(); s.buffer=b;
+  const hpf=audioCtx.createBiquadFilter(); hpf.type='highpass'; hpf.frequency.value=7000;
+  const g=audioCtx.createGain();
+  g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vol,t+.002);
+  g.gain.exponentialRampToValueAtTime(.001,t+dur);
+  s.connect(hpf); hpf.connect(g); g.connect(audioCtx.destination);
+  s.start(t); s.stop(t+dur+.01);
+}
+
+// Open hi-hat — same noise but longer sustain, lower cutoff
+function playOpenHihat(t, vol=0.3) {
+  const dur=.22, n=audioCtx.sampleRate*dur|0;
+  const b=audioCtx.createBuffer(1,n,audioCtx.sampleRate);
+  const d=b.getChannelData(0); for(let i=0;i<n;i++) d[i]=Math.random()*2-1;
+  const s=audioCtx.createBufferSource(); s.buffer=b;
+  const hpf=audioCtx.createBiquadFilter(); hpf.type='highpass'; hpf.frequency.value=5800;
+  const g=audioCtx.createGain();
+  g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vol,t+.002);
+  g.gain.setValueAtTime(vol*.9,t+.06);           // hold a bit
+  g.gain.exponentialRampToValueAtTime(.001,t+dur);
+  s.connect(hpf); hpf.connect(g); g.connect(audioCtx.destination);
+  s.start(t); s.stop(t+dur+.01);
+}
+
+// ═══════════════════════════════════════════════
 //  SCHEDULER
-// ═══════════════════════════════════════════════════════
-const ROWS = ['hihat', 'snare', 'kick'];
+// ═══════════════════════════════════════════════
+const ROWS = ['hihat','snare','kick'];
 
 function scheduleStep(step, t) {
   const st  = pattern[step];
   const dur = stepDuration();
-  if (st.kick)  playKick(t);
-  if (st.snare) playSnare(t);
-  if (st.hihat) playHihat(t);
-  // 16th-note hi-hat fires softly between every step
-  if (is16th)   playHihat(t + dur / 2, 0.18);
+
+  // Kick row
+  if (st.kick === 1) playKick(t);
+  if (st.kick === 2) playTom(t);
+
+  // Snare row
+  if (st.snare === 1) playSnare(t);
+  if (st.snare === 2) playRimshot(t);
+
+  // Hi-hat row
+  if (st.hihat === 1) playHihat(t);
+  if (st.hihat === 2) playOpenHihat(t);
+
+  // 16th button: a second, softer hi-hat hit halfway through each
+  // selected hi-hat step (closed stays closed, open stays open but softer)
+  if (is16th && st.hihat > 0) {
+    const mid = t + dur / 2;
+    if (st.hihat === 1) playHihat(mid, 0.16);
+    else                playOpenHihat(mid, 0.16);
+  }
+
   const delay = Math.max(0, (t - audioCtx.currentTime) * 1000);
   setTimeout(() => lightStep(step), delay);
 }
@@ -587,8 +569,7 @@ function scheduler() {
 
 function startPlaying() {
   ensureAudio();
-  isPlaying = true;
-  curStep   = 0;
+  isPlaying = true; curStep = 0;
   nextTime  = audioCtx.currentTime + 0.05;
   schedTimer = setInterval(scheduler, SCHED_MS);
   document.getElementById('play-btn').innerHTML = ICO_STOP;
@@ -611,49 +592,94 @@ function restartIfPlaying() {
   schedTimer = setInterval(scheduler, SCHED_MS);
 }
 
-// ═══════════════════════════════════════════════════════
-//  GRID BUILD + UPDATE
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
+//  GRID BUILD
+// ═══════════════════════════════════════════════
+// Alt-sound labels shown inside outlined cells
+const ALT_LABELS = { hihat:'OH', snare:'RIM', kick:'TOM' };
+
 function buildGrid() {
-  const n   = stepCount();
-  const sub = compound ? 3 : 2;
-  litStep   = -1;
+  const n          = stepCount();
+  const sub        = compound ? 3 : 2;
+  const displayN   = Math.max(n, MIN_DISPLAY); // never fewer than 4 visual columns
+  litStep = -1;
 
-  const beatLabelsEl = document.getElementById('beat-labels');
-  const stepGridEl   = document.getElementById('step-grid');
-  const rowLabelsEl  = document.getElementById('row-labels');
-  const blSpacerEl   = document.getElementById('bl-spacer');
+  const beatLabsEl = document.getElementById('beat-labels');
+  const gridEl     = document.getElementById('step-grid');
+  const rowsEl     = document.getElementById('row-labels');
+  const spacerEl   = document.getElementById('bl-spacer');
 
-  beatLabelsEl.innerHTML = '';
-  stepGridEl.innerHTML   = '';
+  beatLabsEl.innerHTML = '';
+  gridEl.innerHTML     = '';
 
-  const cols = `repeat(${n}, 1fr)`;
-  beatLabelsEl.style.gridTemplateColumns = cols;
-  stepGridEl.style.gridTemplateColumns   = cols;
+  const cols = `repeat(${displayN}, 1fr)`;
+  beatLabsEl.style.gridTemplateColumns = cols;
+  gridEl.style.gridTemplateColumns     = cols;
 
-  // Sync spacer width to row-labels width after layout
   requestAnimationFrame(() => {
-    blSpacerEl.style.width = rowLabelsEl.offsetWidth + 'px';
+    spacerEl.style.width = rowsEl.offsetWidth + 'px';
   });
 
   // Beat number labels
-  for (let i = 0; i < n; i++) {
+  for (let i = 0; i < displayN; i++) {
     const div = document.createElement('div');
-    div.className = 'bl' + (i % sub === 0 ? ' mb' : '');
-    div.textContent = i % sub === 0 ? String(Math.floor(i / sub) + 1) : '·';
-    beatLabelsEl.appendChild(div);
+    if (i < n) {
+      div.className   = 'bl' + (i % sub === 0 ? ' mb' : '');
+      div.textContent = i % sub === 0 ? String(Math.floor(i / sub) + 1) : '·';
+    } else {
+      div.className = 'bl'; // empty spacer label
+    }
+    beatLabsEl.appendChild(div);
   }
 
-  // Cells: hihat row → snare row → kick row
+  // Cells
   for (const inst of ROWS) {
-    for (let i = 0; i < n; i++) {
+    for (let i = 0; i < displayN; i++) {
+      if (i >= n) {
+        // invisible spacer to keep grid proportions
+        const sp = document.createElement('div');
+        sp.className = 'gc-spacer';
+        gridEl.appendChild(sp);
+        continue;
+      }
+
       const btn = document.createElement('button');
-      btn.className = `gc ${inst}`;
       btn.id        = `gc-${inst}-${i}`;
-      btn.setAttribute('aria-label', `${inst} step ${i + 1}`);
-      if (pattern[i]?.[inst]) btn.classList.add('on');
-      btn.addEventListener('click', () => onCellClick(inst, i));
-      stepGridEl.appendChild(btn);
+      btn.className = `gc ${inst}`;
+      btn.setAttribute('aria-label', `${inst} step ${i+1}`);
+      btn.setAttribute('data-label', ALT_LABELS[inst]);
+      const state = pattern[i]?.[inst] ?? 0;
+      if (state === 1) btn.classList.add('on');
+      if (state === 2) btn.classList.add('alt');
+
+      // Long-press detection via pointerdown/up
+      let holdTimer = null, wasHeld = false;
+
+      btn.addEventListener('pointerdown', e => {
+        e.preventDefault();
+        wasHeld = false;
+        holdTimer = setTimeout(() => {
+          wasHeld = true;
+          onCellHold(inst, i);
+        }, 700);
+      });
+
+      btn.addEventListener('pointerup', () => {
+        clearTimeout(holdTimer);
+        if (!wasHeld) onCellClick(inst, i);
+      });
+
+      btn.addEventListener('pointerleave', () => {
+        clearTimeout(holdTimer);
+        wasHeld = true; // prevent stale click on leave
+      });
+
+      btn.addEventListener('pointercancel', () => {
+        clearTimeout(holdTimer);
+        wasHeld = true;
+      });
+
+      gridEl.appendChild(btn);
     }
   }
 }
@@ -662,43 +688,59 @@ function refreshCells() {
   const n = stepCount();
   for (const inst of ROWS) {
     for (let i = 0; i < n; i++) {
-      document.getElementById(`gc-${inst}-${i}`)
-        ?.classList.toggle('on', !!pattern[i]?.[inst]);
+      const cell = document.getElementById(`gc-${inst}-${i}`);
+      if (!cell) continue;
+      const state = pattern[i]?.[inst] ?? 0;
+      cell.classList.toggle('on',  state === 1);
+      cell.classList.toggle('alt', state === 2);
     }
   }
 }
 
 function onCellClick(inst, step) {
-  if (!pattern[step]) return;
-  pattern[step][inst] = !pattern[step][inst];
+  const cur = pattern[step][inst];
+  // Click: 0→1, 1→0, 2→0
+  pattern[step][inst] = cur === 0 ? 1 : 0;
+  markCustom();
+  refreshCells();
+}
+
+function onCellHold(inst, step) {
+  const cur = pattern[step][inst];
+  // Hold: anything→2 if not already 2, else 2→0
+  pattern[step][inst] = cur === 2 ? 0 : 2;
+  markCustom();
+  refreshCells();
+}
+
+function markCustom() {
   if (activePreset !== null) {
     activePreset = null;
     refreshPresetBtns();
   }
-  refreshCells();
 }
 
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 //  STEP HIGHLIGHT
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 function lightStep(step) {
   dimStep();
   litStep = step;
   for (const inst of ROWS) document.getElementById(`gc-${inst}-${step}`)?.classList.add('cur');
 }
-
 function dimStep() {
   if (litStep < 0) return;
   for (const inst of ROWS) document.getElementById(`gc-${inst}-${litStep}`)?.classList.remove('cur');
   litStep = -1;
 }
 
-// ═══════════════════════════════════════════════════════
-//  PRESETS UI
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
+//  PRESET MANAGEMENT
+// ═══════════════════════════════════════════════
 function refreshPresetBtns() {
   document.querySelectorAll('[data-preset]').forEach(btn => {
-    btn.classList.toggle('sel-preset', btn.dataset.preset === activePreset);
+    const isSel = btn.dataset.preset === activePreset;
+    btn.classList.toggle('sel-preset', isSel);
   });
 }
 
@@ -709,41 +751,78 @@ function selectPreset(pr) {
   restartIfPlaying();
 }
 
-// ═══════════════════════════════════════════════════════
+function saveToPreset(pr) {
+  const key = presetKey(pr);
+  sessionPresets[key] = pattern.map(s => ({ ...s }));
+  activePreset = pr;
+  refreshPresetBtns();
+
+  // Visual "Saved ✓" flash
+  const btn = document.querySelector(`[data-preset="${pr}"]`);
+  const orig = btn.textContent;
+  btn.textContent = '✓';
+  btn.classList.add('save-done');
+  btn.classList.remove('saving');
+  setTimeout(() => {
+    btn.textContent = orig;
+    btn.classList.remove('save-done');
+    refreshPresetBtns();
+  }, 900);
+}
+
+// Hold-to-save on preset buttons (2 seconds)
+document.querySelectorAll('[data-preset]').forEach(btn => {
+  let holdTimer = null, wasSaved = false;
+
+  btn.addEventListener('pointerdown', () => {
+    wasSaved = false;
+    btn.classList.add('saving');
+    holdTimer = setTimeout(() => {
+      wasSaved = true;
+      saveToPreset(btn.dataset.preset);
+    }, 2000);
+  });
+
+  btn.addEventListener('pointerup', () => {
+    clearTimeout(holdTimer);
+    btn.classList.remove('saving');
+    if (!wasSaved) selectPreset(btn.dataset.preset);
+  });
+
+  btn.addEventListener('pointerleave', () => {
+    clearTimeout(holdTimer);
+    btn.classList.remove('saving');
+    wasSaved = true; // cancel
+  });
+
+  btn.addEventListener('pointercancel', () => {
+    clearTimeout(holdTimer);
+    btn.classList.remove('saving');
+    wasSaved = true;
+  });
+});
+
+// ═══════════════════════════════════════════════
 //  TIME SIGNATURE
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 function buildBeatsDD() {
   const dd = document.getElementById('beats-dd');
   dd.innerHTML = '';
   for (let n = 1; n <= 5; n++) {
     const btn = document.createElement('button');
-    btn.className   = 'ts-opt' + (n === beats ? ' active-opt' : '');
+    btn.className   = 'ts-opt' + (n === beats ? ' cur-b' : '');
     btn.textContent = String(n);
     btn.addEventListener('click', e => { e.stopPropagation(); selectBeats(n); closeDD(); });
     dd.appendChild(btn);
   }
 }
-
-function openDD() {
-  buildBeatsDD();
-  document.getElementById('beats-dd').classList.remove('hidden');
-  document.getElementById('beats-btn').classList.add('dd-open');
-}
-
-function closeDD() {
-  document.getElementById('beats-dd').classList.add('hidden');
-  document.getElementById('beats-btn').classList.remove('dd-open');
-}
+function openDD()  { buildBeatsDD(); document.getElementById('beats-dd').classList.remove('hidden'); document.getElementById('beats-btn').classList.add('dd-open'); }
+function closeDD() { document.getElementById('beats-dd').classList.add('hidden'); document.getElementById('beats-btn').classList.remove('dd-open'); }
 
 function selectBeats(n) {
   beats = n;
   document.getElementById('beats-btn').textContent = String(n);
-  // Compound only valid with 2 or 3 beats
-  if (compound && (n === 1 || n === 4 || n === 5)) {
-    compound = false;
-    refreshMeterBtn();
-    hideHint();
-  }
+  if (compound && (n === 1 || n === 4 || n === 5)) { compound = false; refreshMeterBtn(); hideHint(); }
   loadPreset('A');
   buildGrid();
   refreshPresetBtns();
@@ -751,7 +830,7 @@ function selectBeats(n) {
 }
 
 function refreshMeterBtn() {
-  document.getElementById('meter-btn').innerHTML = compound ? ICO_DOTTED : ICO_QUARTER;
+  document.getElementById('meter-btn').innerHTML = compound ? ICO_DOTQTR : ICO_QTR;
 }
 
 function showHint() {
@@ -759,39 +838,31 @@ function showHint() {
   clearTimeout(hintTimer);
   hintTimer = setTimeout(hideHint, 2800);
 }
-function hideHint() {
-  document.getElementById('ts-hint').classList.add('hidden');
-}
+function hideHint() { document.getElementById('ts-hint').classList.add('hidden'); }
 
 function toggleCompound() {
   if (!compound) {
-    // Switching to compound: need beats 2 or 3
     if (beats === 1 || beats === 4 || beats === 5) { showHint(); return; }
     compound = true;
   } else {
     compound = false;
   }
-  hideHint();
-  refreshMeterBtn();
-  loadPreset('A');
-  buildGrid();
-  refreshPresetBtns();
-  restartIfPlaying();
+  hideHint(); refreshMeterBtn();
+  loadPreset('A'); buildGrid(); refreshPresetBtns(); restartIfPlaying();
 }
 
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 //  EVENT LISTENERS
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 
-// Play / stop
+// Play / Stop — spacebar ALWAYS works regardless of focus
 document.getElementById('play-btn').addEventListener('click', () => {
   isPlaying ? stopPlaying() : startPlaying();
 });
 
-// Spacebar
 document.addEventListener('keydown', e => {
-  if (e.code === 'Space' && !['INPUT','BUTTON'].includes(e.target.tagName)) {
-    e.preventDefault();
+  if (e.code === 'Space') {
+    e.preventDefault();  // prevent any focused button from activating
     isPlaying ? stopPlaying() : startPlaying();
   }
 });
@@ -808,8 +879,8 @@ document.getElementById('tap-btn').addEventListener('click', () => {
   if (tapTimes.length && now - tapTimes[tapTimes.length - 1] > 2500) tapTimes = [];
   tapTimes.push(now);
   if (tapTimes.length >= 2) {
-    const diffs = tapTimes.slice(1).map((t, i) => t - tapTimes[i]);
-    const avg   = diffs.reduce((a, b) => a + b) / diffs.length;
+    const diffs = tapTimes.slice(1).map((t,i) => t - tapTimes[i]);
+    const avg   = diffs.reduce((a,b) => a+b) / diffs.length;
     bpm = Math.max(40, Math.min(200, Math.round(60000 / avg)));
     document.getElementById('bpm-display').textContent = bpm;
     document.getElementById('bpm-slider').value = bpm;
@@ -817,28 +888,21 @@ document.getElementById('tap-btn').addEventListener('click', () => {
   if (tapTimes.length > 8) tapTimes.shift();
 });
 
-// Beats button
+// Beats dropdown
 document.getElementById('beats-btn').addEventListener('click', e => {
   e.stopPropagation();
   document.getElementById('beats-dd').classList.contains('hidden') ? openDD() : closeDD();
 });
 
-// Meter button
+// Meter toggle
 document.getElementById('meter-btn').addEventListener('click', e => {
-  e.stopPropagation();
-  closeDD();
-  toggleCompound();
+  e.stopPropagation(); closeDD(); toggleCompound();
 });
 
-// Click outside → close dropdown
+// Close dropdown on outside click
 document.addEventListener('click', () => closeDD());
 
-// Preset buttons
-document.querySelectorAll('[data-preset]').forEach(btn => {
-  btn.addEventListener('click', () => selectPreset(btn.dataset.preset));
-});
-
-// 16th toggle
+// 16th button
 const s16btn = document.getElementById('s16-btn');
 s16btn.innerHTML = ICO_16TH;
 s16btn.addEventListener('click', () => {
@@ -846,9 +910,9 @@ s16btn.addEventListener('click', () => {
   s16btn.classList.toggle('sel-16th', is16th);
 });
 
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 //  INIT
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 document.getElementById('play-btn').innerHTML = ICO_PLAY;
 refreshMeterBtn();
 loadPreset('A');
