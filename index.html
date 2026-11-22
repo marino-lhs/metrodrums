@@ -68,6 +68,36 @@ input[type="range"]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;b
 @keyframes savedPop{0%{background:rgba(245,166,35,.35)}100%{background:rgba(245,166,35,.1)}}
 .bb.save-done{border-color:var(--kick)!important;color:var(--kick)!important;animation:savedPop .5s ease-out forwards}
 
+/* ── ODD METER PANEL ── */
+.odd-panel{
+  background:var(--surface);border:.5px solid var(--border);border-radius:14px;
+  padding:.7rem .9rem;margin-bottom:10px;
+}
+.odd-panel.hidden{display:none}
+.odd-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.odd-lbl{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted)}
+.odd-chips{display:flex;align-items:center;gap:5px}
+.odd-chip{
+  width:38px;height:38px;border-radius:9px;border:1px solid var(--kick);
+  background:rgba(245,166,35,.1);color:var(--kick);
+  font-family:'DM Mono',monospace;font-size:18px;font-weight:500;cursor:pointer;padding:0;
+}
+.odd-plus{color:var(--muted);font-family:'DM Mono',monospace}
+.odd-btn{
+  width:34px;height:34px;border-radius:9px;border:1px solid var(--border);
+  background:var(--surf2);color:var(--text);font-size:18px;cursor:pointer;padding:0;
+}
+.odd-btn:disabled{opacity:.3;cursor:default}
+.odd-total{font-family:'DM Mono',monospace;font-size:14px;color:var(--text);margin-left:2px}
+.odd-quick{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
+.odd-q{
+  height:28px;padding:0 10px;border-radius:8px;border:1px solid var(--border);
+  background:var(--surf2);color:#999;font-family:'DM Mono',monospace;font-size:12px;cursor:pointer;
+}
+.odd-q:hover{background:var(--surface);color:var(--text)}
+.ts-opt.ts-odd{font-size:13px;letter-spacing:.05em}
+.gc.gs:not(.on):not(.alt){border-left-color:#555}
+
 /* ── MAIN CARD ── */
 .main-card{
   background:var(--surface);border:.5px solid var(--border);
@@ -161,6 +191,21 @@ input[type="range"]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;b
 .kb:hover{background:var(--surface)}
 .kb.sel-kit{border-color:var(--kit-color,#888);color:var(--kit-color,#888);background:var(--kit-bg,rgba(136,136,136,.1))}
 
+.share-row{display:flex;justify-content:center;margin-top:12px}
+.share-btn{
+  display:flex;align-items:center;gap:8px;height:40px;padding:0 18px;
+  background:var(--surf2);color:#aaa;border:1px solid var(--border);border-radius:10px;
+  font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:500;cursor:pointer;
+  transition:background .1s,color .1s,border-color .12s;
+}
+.share-btn:hover{background:var(--surface);color:var(--text);border-color:#484848}
+.toast{
+  position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:60;
+  max-width:90vw;padding:10px 16px;border-radius:10px;
+  background:#1d1500;border:1px solid var(--kick);color:var(--kick);
+  font-size:13px;text-align:center;box-shadow:0 6px 24px rgba(0,0,0,.6);
+}
+.toast.hidden{display:none}
 .hints{text-align:center;margin-top:10px;font-size:12px;color:#888;letter-spacing:.03em;line-height:1.9}
 </style>
 </head>
@@ -194,6 +239,25 @@ input[type="range"]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;b
   </div>
 
   <!-- Main card (time-sig + grid) -->
+  <div class="odd-panel hidden" id="odd-panel">
+    <div class="odd-row">
+      <span class="odd-lbl">Groups</span>
+      <div class="odd-chips" id="odd-chips"></div>
+      <button class="odd-btn" id="odd-del" aria-label="Remove group">−</button>
+      <button class="odd-btn" id="odd-add" aria-label="Add group">+</button>
+      <span class="odd-total" id="odd-total"></span>
+    </div>
+    <div class="odd-quick">
+      <button class="odd-q" data-odd="2-2-3">2+2+3</button>
+      <button class="odd-q" data-odd="3-2-2">3+2+2</button>
+      <button class="odd-q" data-odd="2-3-2">2+3+2</button>
+      <button class="odd-q" data-odd="2-3">2+3</button>
+      <button class="odd-q" data-odd="3-2">3+2</button>
+      <button class="odd-q" data-odd="3-3-2">3+3+2</button>
+      <button class="odd-q" data-odd="2-2-2-3">2+2+2+3</button>
+    </div>
+  </div>
+
   <div class="main-card">
     <div class="tsig-col">
       <div class="ts-wrap">
@@ -224,6 +288,14 @@ input[type="range"]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;b
   <!-- Kit row — BELOW the grid -->
   <div class="kit-label">Kit</div>
   <div class="kit-row" id="kit-row"></div>
+
+  <div class="share-row">
+    <button class="share-btn" id="share-btn" aria-label="Share this beat">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="10.5" x2="15.4" y2="6.5"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/></svg>
+      Share this beat
+    </button>
+  </div>
+  <div class="toast hidden" id="toast"></div>
 
   <div class="hints">
     hold grid cell 1s → alt sound &nbsp;·&nbsp; hold A–D 1s → save beat &nbsp;·&nbsp; space = play/stop<br>← → = ±1 bpm &nbsp;·&nbsp; ↑ ↓ = ±5 bpm
@@ -563,6 +635,8 @@ function tom_default(t, ac) {
 //  STATE
 // ═══════════════════════════════════════════
 let bpm=120, beats=4, compound=false, is16th=false;
+// Odd meter: steps are 8th notes, grouped (e.g. 7/8 as 2+2+3)
+let oddMode=false, groups=[2,2,3];
 let activePreset='A', activeKitId='rock';
 let pattern=[];
 const sessionPresets={};
@@ -650,15 +724,42 @@ const PRESETS={
 // ═══════════════════════════════════════════
 //  HELPERS
 // ═══════════════════════════════════════════
-const stepCount=()=>beats*(compound?3:2);
-const stepDuration=()=>compound?20/bpm:30/bpm;
-const presetKey=(pr)=>`${beats}-${compound?'C':'S'}-${pr}`;
+const oddTotal=()=>groups.reduce((a,b)=>a+b,0);
+const stepCount=()=>oddMode?oddTotal():beats*(compound?3:2);
+const stepDuration=()=>oddMode?30/bpm:(compound?20/bpm:30/bpm);
+const presetKey=(pr)=>oddMode?`odd-${groups.join('-')}-${pr}`:`${beats}-${compound?'C':'S'}-${pr}`;
 const MIN_COLS=4;
 const kit=()=>KITS[activeKitId];
 
+// Group start indices, e.g. [2,2,3] -> [0,2,4]
+function groupStarts(){
+  const s=[];let p=0;
+  groups.forEach(g=>{s.push(p);p+=g;});
+  return s;
+}
+
+// Generated A-D presets for any grouping
+function genOdd(pr){
+  const n=oddTotal(), starts=groupStarts();
+  const arr=Array.from({length:n},()=>({hihat:0,snare:0,kick:0}));
+  const set=(i,inst)=>{arr[i][inst]=1;};
+  if(pr==='B'){
+    starts.forEach((s,gi)=>{set(s,'hihat');set(s,gi%2===0?'kick':'snare');});
+    return arr;
+  }
+  for(let i=0;i<n;i++) set(i,'hihat');
+  starts.forEach((s,gi)=>{
+    if(pr==='A') set(s,gi%2===0?'kick':'snare');
+    else if(pr==='C') set(s,'kick');
+    else if(pr==='D') set(s,gi===0?'kick':'snare');
+  });
+  if(pr==='C') set(n-1,'snare');
+  return arr;
+}
+
 function loadPreset(pr){
   const key=presetKey(pr);
-  const src=sessionPresets[key]||PRESETS[key];
+  const src=sessionPresets[key]||PRESETS[key]||(oddMode?genOdd(pr):null);
   if(src){pattern=src.map(s=>({...s}));activePreset=pr;}
   else{pattern=Array.from({length:stepCount()},()=>({hihat:0,snare:0,kick:0}));activePreset=null;}
 }
@@ -739,6 +840,8 @@ function buildGrid(){
   beatLabsEl.style.gridTemplateColumns=cols;gridEl.style.gridTemplateColumns=cols;
   requestAnimationFrame(()=>{spacerEl.style.width=rowsEl.offsetWidth+'px';});
 
+  const gStarts=oddMode?groupStarts():[];
+
   // Update row labels for kit
   const rl=kit().rowLabels;
   document.getElementById('rl-hat').textContent=rl.hat;
@@ -747,7 +850,14 @@ function buildGrid(){
 
   for(let i=0;i<dispN;i++){
     const d=document.createElement('div');
-    if(i<n){d.className='bl'+(i%sub===0?' mb':'');d.textContent=i%sub===0?String(Math.floor(i/sub)+1):'·';}
+    if(i<n){
+      if(oddMode){
+        const gi=gStarts.indexOf(i);
+        d.className='bl'+(gi>=0?' mb':'');d.textContent=gi>=0?String(gi+1):'·';
+      } else {
+        d.className='bl'+(i%sub===0?' mb':'');d.textContent=i%sub===0?String(Math.floor(i/sub)+1):'·';
+      }
+    }
     else d.className='bl';
     beatLabsEl.appendChild(d);
   }
@@ -757,7 +867,7 @@ function buildGrid(){
     for(let i=0;i<dispN;i++){
       if(i>=n){const sp=document.createElement('div');sp.className='gc-spacer';gridEl.appendChild(sp);continue;}
       const btn=document.createElement('button');
-      btn.id=`gc-${inst}-${i}`;btn.className=`gc ${inst}`;
+      btn.id=`gc-${inst}-${i}`;btn.className=`gc ${inst}`+(oddMode&&gStarts.includes(i)&&i>0?' gs':'');
       const altKey=inst==='hihat'?'hat':inst; btn.setAttribute('data-label', kit().altLabels[altKey]||'ALT');
       const state=pattern[i]?.[inst]??0;
       if(state===1)btn.classList.add('on');
@@ -872,20 +982,77 @@ function buildBeatsDD(){
     const btn=document.createElement('button');
     btn.className='ts-opt'+(n===beats?' cur-b':'');btn.textContent=String(n);
     btn.addEventListener('click',e=>{e.stopPropagation();selectBeats(n);closeDD();});
+    btn.className='ts-opt'+(!oddMode&&n===beats?' cur-b':'');
     dd.appendChild(btn);
   }
+  const odd=document.createElement('button');
+  odd.className='ts-opt ts-odd'+(oddMode?' cur-b':'');odd.textContent='ODD';
+  odd.addEventListener('click',e=>{e.stopPropagation();enterOdd();closeDD();});
+  dd.appendChild(odd);
 }
 function openDD(){buildBeatsDD();document.getElementById('beats-dd').classList.remove('hidden');document.getElementById('beats-btn').classList.add('dd-open');}
 function closeDD(){document.getElementById('beats-dd').classList.add('hidden');document.getElementById('beats-btn').classList.remove('dd-open');}
 function selectBeats(n){
+  if(oddMode) exitOdd();
   beats=n;document.getElementById('beats-btn').textContent=String(n);
   if(compound&&(n===1||n===4||n===5)){compound=false;refreshMeterBtn();hideHint();}
   loadPreset('A');buildGrid();refreshPresetBtns();restartIfPlaying();
 }
-function refreshMeterBtn(){document.getElementById('meter-btn').innerHTML=compound?ICO_DOTQTR:ICO_QTR;}
-function showHint(){document.getElementById('ts-hint').classList.remove('hidden');clearTimeout(hintTimer);hintTimer=setTimeout(hideHint,2800);}
+const ICO_EIGHTH=`<svg viewBox="0 0 22 44" width="18" height="38" fill="currentColor"><ellipse cx="13" cy="10" rx="9" ry="6" transform="rotate(-20 13 10)"/><line x1="4.5" y1="13" x2="4.5" y2="43" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><path d="M4.5 43 Q14 40 15 31" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>`;
+function refreshMeterBtn(){document.getElementById('meter-btn').innerHTML=oddMode?ICO_EIGHTH:(compound?ICO_DOTQTR:ICO_QTR);}
+function showHint(msg){
+  const h=document.getElementById('ts-hint');
+  h.textContent=msg||'Select 2 or 3 beats';
+  h.classList.remove('hidden');clearTimeout(hintTimer);hintTimer=setTimeout(hideHint,2800);
+}
 function hideHint(){document.getElementById('ts-hint').classList.add('hidden');}
+
+// ─── Odd meter builder ────────────────────────
+function enterOdd(){
+  oddMode=true;compound=false;
+  document.getElementById('odd-panel').classList.remove('hidden');
+  refreshOddUI();
+  loadPreset('A');buildGrid();refreshPresetBtns();restartIfPlaying();
+}
+function exitOdd(){
+  oddMode=false;
+  document.getElementById('odd-panel').classList.add('hidden');
+  refreshMeterBtn();
+}
+function setGroups(g){
+  groups=g.slice();
+  refreshOddUI();
+  loadPreset('A');buildGrid();refreshPresetBtns();restartIfPlaying();
+}
+function refreshOddUI(){
+  document.getElementById('beats-btn').textContent=String(oddTotal());
+  refreshMeterBtn();
+  const chips=document.getElementById('odd-chips');chips.innerHTML='';
+  groups.forEach((g,i)=>{
+    const c=document.createElement('button');
+    c.className='odd-chip';c.textContent=String(g);
+    c.title='Tap to change group size';
+    c.addEventListener('click',e=>{
+      e.stopPropagation();
+      const ng=groups.slice();
+      ng[i]=ng[i]>=4?2:ng[i]+1;
+      if(ng.reduce((a,b)=>a+b,0)>16) ng[i]=2;
+      setGroups(ng);
+    });
+    chips.appendChild(c);
+    if(i<groups.length-1){const p=document.createElement('span');p.className='odd-plus';p.textContent='+';chips.appendChild(p);}
+  });
+  document.getElementById('odd-total').textContent='= '+oddTotal()+'/8';
+  document.getElementById('odd-add').disabled=groups.length>=6||oddTotal()+2>16;
+  document.getElementById('odd-del').disabled=groups.length<=2;
+}
+document.getElementById('odd-add').addEventListener('click',e=>{e.stopPropagation();setGroups(groups.concat([2]));});
+document.getElementById('odd-del').addEventListener('click',e=>{e.stopPropagation();setGroups(groups.slice(0,-1));});
+document.querySelectorAll('[data-odd]').forEach(b=>{
+  b.addEventListener('click',e=>{e.stopPropagation();setGroups(b.dataset.odd.split('-').map(Number));});
+});
 function toggleCompound(){
+  if(oddMode){showHint('Odd meter counts in 8th notes');return;}
   if(!compound){if(beats===1||beats===4||beats===5){showHint();return;}compound=true;}
   else compound=false;
   hideHint();refreshMeterBtn();loadPreset('A');buildGrid();refreshPresetBtns();restartIfPlaying();
@@ -932,6 +1099,90 @@ s16btn.innerHTML=ICO_16TH;
 s16btn.addEventListener('click',()=>{is16th=!is16th;s16btn.classList.toggle('sel-16th',is16th);});
 
 // ═══════════════════════════════════════════
+//  SHARE — one beat, encoded in the link after the #
+//  Opening a link only changes the grid. It never writes to saved A–D slots.
+// ═══════════════════════════════════════════
+let toastTimer=null;
+function toast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.classList.remove('hidden');
+  clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.add('hidden'),3500);
+}
+
+function encodeBeat(){
+  const rows=['hihat','snare','kick'];
+  const p=rows.map(r=>pattern.map(s=>s[r]||0).join('')).join('');
+  const m=oddMode?'o'+groups.join('-'):beats+(compound?'c':'s');
+  const q=new URLSearchParams({v:'1',m,k:activeKitId,t:String(bpm),h:is16th?'1':'0',p});
+  return q.toString();
+}
+
+function shareUrl(){
+  return location.origin==='null'||location.protocol==='file:'
+    ? location.href.split('#')[0]+'#'+encodeBeat()
+    : location.origin+location.pathname+'#'+encodeBeat();
+}
+
+// Returns true if the hash held a valid beat and it was applied.
+function applyBeat(hash){
+  try{
+    const q=new URLSearchParams(hash.replace(/^#/,''));
+    if(q.get('v')!=='1') return false;
+    const m=q.get('m')||'', kitId=q.get('k'), t=parseInt(q.get('t'),10), p=q.get('p')||'';
+    if(!KITS[kitId]||!(t>=40&&t<=200)) return false;
+
+    let nOdd=false,nGroups=groups,nBeats=beats,nComp=false;
+    if(m[0]==='o'){
+      const g=m.slice(1).split('-').map(Number);
+      if(g.length<2||g.length>6||g.some(x=>!(x>=1&&x<=4))||g.reduce((a,b)=>a+b,0)>16) return false;
+      nOdd=true;nGroups=g;
+    } else {
+      nBeats=parseInt(m[0],10);nComp=m[1]==='c';
+      if(!(nBeats>=1&&nBeats<=5)||(m[1]!=='s'&&m[1]!=='c')) return false;
+      if(nComp&&nBeats!==2&&nBeats!==3) return false;
+    }
+    const n=nOdd?nGroups.reduce((a,b)=>a+b,0):nBeats*(nComp?3:2);
+    if(p.length!==3*n||/[^0-2]/.test(p)) return false;
+
+    oddMode=nOdd;groups=nGroups;beats=nBeats;compound=nComp;
+    activeKitId=kitId;bpm=t;is16th=q.get('h')==='1';
+    pattern=Array.from({length:n},(_,i)=>({hihat:+p[i],snare:+p[n+i],kick:+p[2*n+i]}));
+    activePreset=null;
+
+    document.getElementById('odd-panel').classList.toggle('hidden',!oddMode);
+    if(oddMode) refreshOddUI();
+    else{document.getElementById('beats-btn').textContent=String(beats);refreshMeterBtn();}
+    document.getElementById('bpm-display').textContent=bpm;
+    document.getElementById('bpm-slider').value=bpm;
+    s16btn.classList.toggle('sel-16th',is16th);
+    refreshKitBtns();buildGrid();refreshPresetBtns();restartIfPlaying();
+    return true;
+  }catch(e){return false;}
+}
+
+async function shareBeat(){
+  const url=shareUrl();
+  const note=location.protocol==='file:'?' (works for others once the app is hosted online)':'';
+  if(navigator.share){
+    try{await navigator.share({title:'Drum Metronome beat',text:'Try this beat',url});return;}
+    catch(e){if(e&&e.name==='AbortError') return;}
+  }
+  try{await navigator.clipboard.writeText(url);toast('Link copied'+note);return;}
+  catch(e){}
+  const ta=document.createElement('textarea');
+  ta.value=url;ta.style.position='fixed';ta.style.opacity='0';
+  document.body.appendChild(ta);ta.select();
+  let ok=false;try{ok=document.execCommand('copy');}catch(e){}
+  ta.remove();
+  toast(ok?'Link copied'+note:'Could not copy the link');
+}
+document.getElementById('share-btn').addEventListener('click',shareBeat);
+
+window.addEventListener('hashchange',()=>{
+  if(applyBeat(location.hash)) toast('Shared beat loaded. Hold A–D for 1s to keep it.');
+});
+
+// ═══════════════════════════════════════════
 //  INIT
 // ═══════════════════════════════════════════
 document.getElementById('play-btn').innerHTML=ICO_PLAY;
@@ -940,6 +1191,9 @@ buildKitBtns();
 loadPreset('A');
 buildGrid();
 refreshPresetBtns();
+if(location.hash.length>1 && applyBeat(location.hash)){
+  toast('Shared beat loaded. Hold A–D for 1s to keep it.');
+}
 </script>
 </body>
 </html>
