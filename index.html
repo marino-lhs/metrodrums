@@ -609,7 +609,76 @@ const KITS = {
       master.gain.setValueAtTime(1,t);
     },
   },
+
+  // Dhol / Indian percussion — synthesized. Pitch runs high (top) to low (bottom):
+  //   top    TIL tilli (dhol treble stick)   | alt TIN tabla high ring
+  //   middle TAK dhol stick, mid pitch       | alt NA  tabla mid ring
+  //   bottom DAG dagga (dhol bass)           | alt GE  tabla bayan, rising glide
+  dhol: {
+    label: 'Dhol',
+    color: '#e8527a',
+    bg: 'rgba(232,82,122,.1)',
+    rowLabels: { hat:'TIL', snare:'TAK', kick:'DAG' },
+    altLabels: { hat:'TIN', snare:'NA',  kick:'GE'  },
+
+    // Tilli: thin stick on the treble skin. Bright, short crack.
+    hihat: (t, ac, vol=0.3) => {
+      const k=vol/.3;
+      ip_tone(ac,t,980,820,.04,.07,.4*k);
+      ip_tone(ac,t,1470,1230,.04,.04,.18*k);
+      ip_noise(ac,t,.05,'bandpass',3800,1.1,.6*k);
+    },
+    // Tin: tabla high ring. Near-harmonic partials give the pitched, singing tone.
+    openhat: (t, ac, vol=0.28) => {
+      const k=vol/.28;
+      [[1,.5,.55],[2,.25,.4],[3,.12,.28]].forEach(([m,a,d])=>ip_tone(ac,t,520*m*1.04,520*m,.04,d,a*k));
+      ip_noise(ac,t,.012,'bandpass',3200,1.2,.45*k);
+    },
+    // Tak: dhol stick, mid pitch, dry and short.
+    snare: (t, ac) => {
+      ip_tone(ac,t,440,330,.05,.14,.7,'triangle');
+      ip_tone(ac,t,820,610,.04,.06,.25);
+      ip_noise(ac,t,.03,'bandpass',1800,1.0,.7);
+    },
+    // Na: tabla mid ring.
+    rimshot: (t, ac) => {
+      [[1,.5,.4],[2,.25,.3],[3,.12,.2]].forEach(([m,a,d])=>ip_tone(ac,t,300*m*1.03,300*m,.03,d,a));
+      ip_noise(ac,t,.012,'bandpass',2200,1.2,.45);
+    },
+    // Dagga: dhol bass skin. Boomy, with a pitch drop.
+    kick: (t, ac) => {
+      ip_tone(ac,t,135,78,.09,.55,.78);
+      ip_tone(ac,t,210,120,.06,.22,.25);
+      ip_noise(ac,t,.02,'lowpass',500,.7,.3);
+    },
+    // Ge: tabla bayan. Pitch rises under the palm.
+    tom: (t, ac) => {
+      ip_tone(ac,t,92,150,.28,.6,.78);
+      ip_tone(ac,t,184,290,.28,.25,.16);
+      ip_noise(ac,t,.015,'lowpass',700,.8,.3);
+    },
+  },
 };
+
+// ─── Indian percussion helpers (used by the Dhol kit) ───
+// Pitched tone: sweeps f0 -> f1 over fT seconds, fades out over dur seconds.
+function ip_tone(ac,t,f0,f1,fT,dur,amp,type){
+  const o=ac.createOscillator(); o.type=type||'sine';
+  o.frequency.setValueAtTime(f0,t); o.frequency.exponentialRampToValueAtTime(f1,t+fT);
+  const g=ac.createGain();
+  g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(amp,t+.002); g.gain.exponentialRampToValueAtTime(.001,t+dur);
+  o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t+dur+.01);
+}
+// Filtered noise burst for stick and skin attacks.
+function ip_noise(ac,t,dur,ftype,freq,q,amp){
+  const n=Math.max(1,ac.sampleRate*dur|0), b=ac.createBuffer(1,n,ac.sampleRate), d=b.getChannelData(0);
+  for(let i=0;i<n;i++) d[i]=Math.random()*2-1;
+  const s=ac.createBufferSource(); s.buffer=b;
+  const f=ac.createBiquadFilter(); f.type=ftype; f.frequency.value=freq; f.Q.value=q;
+  const g=ac.createGain();
+  g.gain.setValueAtTime(amp,t); g.gain.exponentialRampToValueAtTime(.001,t+dur);
+  s.connect(f); f.connect(g); g.connect(ac.destination); s.start(t); s.stop(t+dur+.005);
+}
 
 // ─── Shared defaults ──────────────────────────
 function rimshot_default(t, ac) {
